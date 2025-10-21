@@ -1,0 +1,25 @@
+/* ✅ Import TailwindCSS v4 */
+@import "tailwindcss";
+
+/* 🎨 Custom Blizza Theme Colors */
+:root {
+  --blizza-pink: #FF2D84;
+  --blizza-pale-pink: #FFD6E8;
+  --blizza-rose-gold: #B76E79;
+  --blizza-accent: #F97316;
+  --blizza-bg: #FFF7FB;
+}
+
+/* 🧩 Base reset & typography */
+html, body {
+  font-family: Inter, ui-sans-serif, system-ui;
+  background-color: var(--blizza-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 📦 Helper */
+.container-max {
+  max-width: 1200px;
+  margin: 0 auto;
+}
