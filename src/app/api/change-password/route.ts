@@ -19,10 +19,25 @@ export async function PUT(request: Request) {
     }
     
     // Mendapatkan user ID dari token
-    const { userId } = decodeToken(token); 
+    // const { userId } = decodeToken(token); 
+    const decodedPayload = decodeToken(token); 
+    const userId = decodedPayload?.userId; // Ambil userId hanya jika payload ada
+    
+    // Tambahkan pengecekan apakah userId berhasil diekstrak
+    if (!userId) {
+        return new NextResponse(JSON.stringify({ message: 'Invalid token payload.' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' },
+        });
+    }
     
     // 3. Ambil data dari Frontend
+    // PENTING: Jika kamu menggunakan parseInt di bawah, pastikan userId adalah number.
+    // Asumsi userId di payload JWT adalah number, atau kita ubah ke number di sini:
+    const userIdInt = parseInt(userId as any, 10); 
+
     const { currentPassword, newPassword } = await request.json();
+
 
     // 4. Validasi Input Dasar
     if (!currentPassword || !newPassword) {
@@ -41,7 +56,7 @@ export async function PUT(request: Request) {
     try {
         // 5. Ambil user (termasuk password hash-nya)
         const user = await prisma.user.findUnique({
-            where: { id: parseInt(userId) }, // Gunakan parseInt karena ID dari JWT decode mungkin berupa string
+            where: { id: userIdInt }, // <<< GUNAKAN userIdInt
             select: { password: true }
         });
 
@@ -67,7 +82,7 @@ export async function PUT(request: Request) {
 
         // 8. Update Password di Database
         await prisma.user.update({
-            where: { id: parseInt(userId) },
+            where: { id: userIdInt }, // <<< GUNAKAN userIdInt
             data: { password: newHashedPassword }
         });
 
