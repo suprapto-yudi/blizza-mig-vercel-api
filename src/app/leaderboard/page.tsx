@@ -1,7 +1,7 @@
 // src/app/leaderboard/page.tsx
 
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import React from 'react';
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import React from "react";
 
 const LeaderboardContent = () => {
     // --- Pastikan tidak ada tag yang salah tutup atau children yang bertabrakan ---
@@ -9,7 +9,7 @@ const LeaderboardContent = () => {
         <> {/* <-- Wajib dibungkus Fragment karena me-return header dan div terpisah */}
             <header className="mb-8">
                 <h1 className="text-3xl font-bold">Affiliate Leaderboard 🏆</h1>
-                <p className="text-gray-500 mt-1">See who's leading the pack and get inspired!</p>
+                <p className="text-gray-500 mt-1">See who is leading the pack and get inspired!</p>
             </header>
             <div className="bg-white p-6 rounded-2xl shadow-lg">
                 <div className="flex justify-between items-center mb-4">
