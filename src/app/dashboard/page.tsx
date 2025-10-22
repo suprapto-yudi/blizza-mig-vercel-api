@@ -135,11 +135,13 @@ const DashboardContent = () => {
             body: JSON.stringify({ isCompleted: !currentStatus }),
         });
 
+        const result = await response.json(); // <<< TAMBAH BARIS INI untuk mendapatkan pesan error jika ada
+
         // if (!result.success) {
         // Handle response
         if (!response.ok) {
             // Rollback jika API gagal
-            alert('Gagal update status! Koneksi terputus atau token kadaluarsa.');
+            alert(result.message || 'Gagal update status! Koneksi terputus atau token kadaluarsa.');
             fetchTodos(); // Re-fetch data yang benar
         }
         // Tidak perlu update state lagi karena sudah di-update secara optimis di awal
@@ -154,13 +156,15 @@ const DashboardContent = () => {
             method: 'DELETE',
         });
 
+        const result = await response.json(); // <<< TAMBAH BARIS INI
+
         // if (result.success) {
         // Handle response
         if (response.ok) {
             // Update UI: Hapus ToDo dari state lokal
             setTodos(prevTodos => prevTodos.filter(t => t.id !== todoId));
         } else {
-            alert('Gagal menghapus To-Do: ' + result.message);
+            alert('Gagal menghapus To-Do: ' + (result.message || response.statusText));
         }
     };
 
