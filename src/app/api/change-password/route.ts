@@ -19,25 +19,9 @@ export async function PUT(request: Request) {
     }
     
     // Mendapatkan user ID dari token
-    // const { userId } = decodeToken(token); 
-    /*
-    const decodedPayload = decodeToken(token); 
-    const userId = decodedPayload?.userId; // Ambil userId hanya jika payload ada
     
-    // Tambahkan pengecekan apakah userId berhasil diekstrak
-    if (!userId) {
-        return new NextResponse(JSON.stringify({ message: 'Invalid token payload.' }), {
-            status: 401,
-            headers: { 'Content-Type': 'application/json' },
-        });
-    }
     
     // 3. Ambil data dari Frontend
-    // PENTING: Jika kamu menggunakan parseInt di bawah, pastikan userId adalah number.
-    // Asumsi userId di payload JWT adalah number, atau kita ubah ke number di sini:
-    const userIdInt = parseInt(userId as any, 10); 
-    */
-
     // Koreksi yang lebih aman (pastikan userId benar-benar ada)
     const decodedPayload = decodeToken(token);
     const userId = decodedPayload?.userId; // Tipe: number | undefined

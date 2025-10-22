@@ -31,7 +31,7 @@ export default function SignupForm() {
         // 1. Validasi Input Kosong (Tetap di Frontend)
         for (const key in formData) {
             if (!formData[key as keyof typeof formData]) {
-                setError('Ups! Semua data wajib diisi, Bro. Yuk, lengkapi dulu formulirnya ya!');
+                setError("Ups! Semua data wajib diisi, Bro-Sis!. Yuk, lengkapi dulu formulirnya ya!");
                 setIsLoading(false);
                 return;
             }
@@ -39,7 +39,9 @@ export default function SignupForm() {
 
         try {
             // 2. Pemanggilan API ke Backend Express (Port 4000)
-            const response = await fetch('http://localhost:4000/api/signup', { // <<< PANGGIL BACKEND
+            // const response = await fetch('http://localhost:4000/api/login', { // <<< AKAN KITA BUAT
+            // <<< 2. GANTI URL LENGKAP DENGAN PATH RELATIF >>>
+            const response = await fetch('/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -76,7 +78,7 @@ export default function SignupForm() {
 
         } catch (err) {
             // Error Jaringan (misal, backend belum running)
-            console.error('Network/Fetch Error:', err);
+            console.error("Network/Fetch Error:", err);
             setError("Gagal terhubung ke server. Pastikan server backend sudah berjalan (Port 5000).");
             setIsLoading(false);
 

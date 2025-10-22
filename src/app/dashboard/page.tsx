@@ -141,7 +141,7 @@ const DashboardContent = () => {
         // Handle response
         if (!response.ok) {
             // Rollback jika API gagal
-            alert(result.message || 'Gagal update status! Koneksi terputus atau token kadaluarsa.');
+            alert(result.message || "Gagal update status! Koneksi terputus atau token kadaluarsa.");
             fetchTodos(); // Re-fetch data yang benar
         }
         // Tidak perlu update state lagi karena sudah di-update secara optimis di awal
@@ -149,7 +149,7 @@ const DashboardContent = () => {
 
     // --- LOGIC HANDLE DELETE TODO (DELETE /todos/:id) ---
     const handleDeleteTodo = async (todoId: number) => {
-        if (!confirm('Yakin ingin menghapus To-Do ini?')) return; // Konfirmasi hapus
+        if (!confirm("Yakin ingin menghapus To-Do ini?")) return; // Konfirmasi hapus
 
         // const result = await apiFetch<any>(`/todos/${todoId}`, {
         const response = await secureFetch(`/todos/${todoId}`, { // <<< GANTI
@@ -164,7 +164,7 @@ const DashboardContent = () => {
             // Update UI: Hapus ToDo dari state lokal
             setTodos(prevTodos => prevTodos.filter(t => t.id !== todoId));
         } else {
-            alert('Gagal menghapus To-Do: ' + (result.message || response.statusText));
+            alert("Gagal menghapus To-Do: " + (result.message || response.statusText));
         }
     };
 
