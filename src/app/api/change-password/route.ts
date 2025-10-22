@@ -27,7 +27,7 @@ export async function PUT(request: Request) {
     const userId = decodedPayload?.userId; // Tipe: number | undefined
 
     if (userId === undefined || userId === null) { 
-        return new NextResponse(JSON.stringify({ message: 'Invalid token payload: User ID missing.' }), {
+        return new NextResponse(JSON.stringify({ message: "Invalid token payload: User ID missing." }), {
             status: 401,
             headers: { 'Content-Type': 'application/json' },
         });
@@ -36,7 +36,6 @@ export async function PUT(request: Request) {
     // Ganti parseInt(userId as any, 10) dengan pengecekan
     // PENTING: Jika ID di DB kamu number, pastikan userId dari token adalah number/string yang valid.
     const userIdNumber = Number(userId); // Atau pakai parseInt(userId, 10) jika ID selalu string
-    // Pastikan semua panggilan prisma.user.findUnique menggunakan userIdNumber.
 
     const { currentPassword, newPassword } = await request.json();
 
@@ -58,12 +57,12 @@ export async function PUT(request: Request) {
     try {
         // 5. Ambil user (termasuk password hash-nya)
         const user = await prisma.user.findUnique({
-            where: { id: userId }, // <<< GUNAKAN userIdInt
+            where: { id: userIdNumber }, // <<< KOREKSI: HARUS GUNAKAN userIdNumber
             select: { password: true }
         });
 
         if (!user) {
-            return new NextResponse(JSON.stringify({ message: 'Pengguna tidak ditemukan.' }), {
+            return new NextResponse(JSON.stringify({ message: "Pengguna tidak ditemukan." }), {
                 status: 404,
                 headers: { 'Content-Type': 'application/json' },
             });
@@ -72,7 +71,7 @@ export async function PUT(request: Request) {
         // 6. Verifikasi Current Password
         const isMatch = await bcrypt.compare(currentPassword, user.password);
         if (!isMatch) {
-            return new NextResponse(JSON.stringify({ message: 'Password saat ini salah.' }), {
+            return new NextResponse(JSON.stringify({ message: "Password saat ini salah." }), {
                 status: 400,
                 headers: { 'Content-Type': 'application/json' },
             });
@@ -84,14 +83,14 @@ export async function PUT(request: Request) {
 
         // 8. Update Password di Database
         await prisma.user.update({
-            where: { id: userId }, // <<< GUNAKAN userIdInt
+            where: { id: userIdNumber }, // <<< KOREKSI: HARUS GUNAKAN userIdNumber
             data: { password: newHashedPassword }
         });
 
         // 9. Respon Sukses
         return new NextResponse(JSON.stringify({ 
             success: true, 
-            message: 'Password berhasil diperbarui! Anda harus login kembali.' 
+            message: "Password berhasil diperbarui! Anda harus login kembali." 
         }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
@@ -99,7 +98,7 @@ export async function PUT(request: Request) {
 
     } catch (error) {
         console.error("Error Change Password:", error);
-        return new NextResponse(JSON.stringify({ message: 'Server error saat mengganti password.' }), {
+        return new NextResponse(JSON.stringify({ message: "Server error saat mengganti password." }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
         });
