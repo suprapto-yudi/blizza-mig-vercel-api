@@ -1,7 +1,8 @@
 'use client'; 
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import React, { useState, useEffect, useCallback } from 'react';
-import { apiFetch } from '@/lib/ApiService'; // Service untuk API Call (dengan JWT)
+// import { apiFetch } from '@/lib/ApiService'; // Service untuk API Call (dengan JWT)
+import { useAuth } from '@/lib/AuthContext'; // PENTING: Tambahkan import ini!
 import { RocketIcon, CheckIcon, CrossCircledIcon } from '@radix-ui/react-icons'; 
 import { PlusIcon, Trash2Icon } from 'lucide-react'; // Icon untuk fitur baru
 
@@ -22,6 +23,7 @@ interface TodoResponse {
 
 
 const DashboardContent = () => {
+    const { token } = useAuth(); // PENTING: Ambil token di awal dari Context Auth
     // 1. STATE MANAGEMENT
     const [todos, setTodos] = useState<Todo[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -31,21 +33,53 @@ const DashboardContent = () => {
     const [newTodoTitle, setNewTodoTitle] = useState('');
     const [isPosting, setIsPosting] = useState(false);
 
+    // FUNGSI HELPER BARU UNTUK FETCH DATA (MENGGANTIKAN apiFetch)
+    const secureFetch = async (endpoint: string, options?: RequestInit) => {
+        if (!token) {
+            setError('Sesi kedaluwarsa. Silakan login ulang.');
+            setIsLoading(false);
+            throw new Error('No token available');
+        }
+        
+        // Sesuaikan endpoint untuk API Routes di Next.js
+        const fullPath = `/api${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+
+        const response = await fetch(fullPath, {
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`, // Sertakan token
+                ...options?.headers,
+            },
+        });
+        
+        return response;
+    };
+    // --------------------------------------------------------------------------
+
     // 2. DATA FETCHING (READ /todos) - Dibuat Reusable
     const fetchTodos = useCallback(async () => {
         setIsLoading(true);
         setError(null);
         
-        // Panggil API GET /api/todos. Token JWT otomatis ditambahkan.
-        const result = await apiFetch<TodoResponse>('/todos'); 
-
-        if (result.success && result.data?.todos) {
-            setTodos(result.data.todos);
-        } else {
-            setError(result.message || 'Gagal mengambil data To-Do List. Cek server backend.');
+        try {
+            // GANTI: const result = await apiFetch<TodoResponse>('/todos'); 
+            const response = await secureFetch('/todos', { method: 'GET' }); // <<< GANTI
+            
+            const result = await response.json();
+            
+            if (response.ok && result.todos) { // Cek response.ok dan result.todos
+                setTodos(result.todos);
+            } else {
+                setError(result.message || 'Gagal mengambil data To-Do List.');
+            }
+        } catch (e) {
+            // Error ditangkap dari secureFetch jika tidak ada token
+            if (error === null) setError('Gagal terhubung ke server atau sesi berakhir.');
         }
+
         setIsLoading(false);
-    }, []); 
+    }, [token, setError, setIsLoading]); // Tambahkan token, setError, setIsLoading sebagai dependencies 
 
     // Panggil fetchTodos saat component mount
     useEffect(() => {
@@ -60,7 +94,8 @@ const DashboardContent = () => {
 
         setIsPosting(true);
 
-        const result = await apiFetch<{ todo: Todo }>('/todos', {
+        // const result = await apiFetch<{ todo: Todo }>('/todos', {
+        const response = await secureFetch('/todos', { // <<< GANTI
             method: 'POST',
             body: JSON.stringify({ 
                 title: newTodoTitle.trim(),
@@ -68,7 +103,11 @@ const DashboardContent = () => {
             }),
         });
 
-        if (result.success && result.data?.todo) {
+        // Handle response (pastikan result.success/response.ok)
+        const result = await response.json();
+        // if (result.success && result.data?.todo) 
+        if (response.ok && result.todo)
+        {
             // Update UI secara optimis
             setTodos(prevTodos => [result.data!.todo, ...prevTodos]); // Tambah di awal list
             setNewTodoTitle(''); 
@@ -90,12 +129,15 @@ const DashboardContent = () => {
             )
         );
 
-        const result = await apiFetch<any>(`/todos/${todoId}`, {
+        // const result = await apiFetch<any>(`/todos/${todoId}`, {
+        const response = await secureFetch(`/todos/${todoId}`, { // <<< GANTI
             method: 'PUT',
             body: JSON.stringify({ isCompleted: !currentStatus }),
         });
 
-        if (!result.success) {
+        // if (!result.success) {
+        // Handle response
+        if (!response.ok) {
             // Rollback jika API gagal
             alert('Gagal update status! Koneksi terputus atau token kadaluarsa.');
             fetchTodos(); // Re-fetch data yang benar
@@ -107,11 +149,14 @@ const DashboardContent = () => {
     const handleDeleteTodo = async (todoId: number) => {
         if (!confirm('Yakin ingin menghapus To-Do ini?')) return; // Konfirmasi hapus
 
-        const result = await apiFetch<any>(`/todos/${todoId}`, {
+        // const result = await apiFetch<any>(`/todos/${todoId}`, {
+        const response = await secureFetch(`/todos/${todoId}`, { // <<< GANTI
             method: 'DELETE',
         });
 
-        if (result.success) {
+        // if (result.success) {
+        // Handle response
+        if (response.ok) {
             // Update UI: Hapus ToDo dari state lokal
             setTodos(prevTodos => prevTodos.filter(t => t.id !== todoId));
         } else {
