@@ -2,7 +2,17 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, AuthService } from './Auth'; // Asumsi: User type & AuthService ada di src/lib/Auth.ts
+// import { User, AuthService } from './Auth'; // Asumsi: User type & AuthService ada di src/lib/Auth.ts
+
+// <<< TAMBAHKAN TIPE USER DI SINI (Atau impor dari src/types/user.ts jika ada) >>>
+interface User {
+    id: number;
+    email: string;
+    fullName: string;
+    phone: string;
+    // Tambahkan semua field user lainnya yang kamu gunakan
+}
+// <<< ------------------------------------------------------------------------ >>>
 
 // 1. Definisikan Tipe Context
 interface AuthContextType {
@@ -26,30 +36,62 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [token, setToken] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    // [a] EFFECT: Cek Local Storage saat mount pertama kali (Hydration)
+    // --- HELPER LOCAL STORAGE (Pindahkan dari AuthService) ---
+    const getStoredAuth = () => {
+        try {
+            const token = localStorage.getItem('token');
+            const userString = localStorage.getItem('user');
+            if (token && userString) {
+                return { token, user: JSON.parse(userString) as User };
+            }
+            return { token: null, user: null };
+        } catch (error) {
+            return { token: null, user: null };
+        }
+    };
+
+    const setStoredAuth = (token: string, userData: User) => {
+        try {
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(userData));
+        } catch (error) {
+            // Handle error jika Local Storage penuh/tidak tersedia
+        }
+    };
+
+    const clearStoredAuth = () => {
+        try {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+        } catch (error) {
+            // Handle error
+        }
+    };
+    // -----------------------------------------------------
+
+    // [a] EFFECT: Cek Local Storage saat mount pertama kali
     useEffect(() => {
-        const storedToken = AuthService.getToken();
-        const storedUser = AuthService.getUser();
+        const storedAuth = getStoredAuth();
         
-        if (storedToken && storedUser) {
-            setUser(storedUser);
-            setToken(storedToken);
+        if (storedAuth.token && storedAuth.user) {
+            setUser(storedAuth.user);
+            setToken(storedAuth.token);
         }
         setIsLoading(false);
     }, []);
 
     // [b] FUNGSI LOGIN: Dipanggil saat user berhasil login atau update profile
     const login = (newToken: string, userData: User) => {
-        AuthService.setAuth(newToken, userData); // Simpan ke Local Storage
-        setUser(userData); // Update State
-        setToken(newToken); // Update State
+        setStoredAuth(newToken, userData); // Panggil helper baru
+        setUser(userData);
+        setToken(newToken);
     };
 
     // [c] FUNGSI LOGOUT: Dipanggil saat user klik Logout
     const logout = () => {
-        AuthService.logout(); // Hapus dari Local Storage
-        setUser(null); // Clear State
-        setToken(null); // Clear State
+        clearStoredAuth(); // Panggil helper baru
+        setUser(null);
+        setToken(null);
     };
 
     return (

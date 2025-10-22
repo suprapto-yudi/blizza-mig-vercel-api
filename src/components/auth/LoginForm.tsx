@@ -2,12 +2,19 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AuthService } from '@/lib/Auth';
+// import { AuthService } from '@/lib/Auth';
+
+// <<< GANTI DENGAN IMPORT CONTEXT BARU >>>
+import { useAuth } from '@/lib/AuthContext'; 
+// <<< -------------------------------- >>>
 
 // Catatan: Dummy DB dihapus, sekarang kita panggil backend.
 
 export default function LoginForm() {
     const router = useRouter(); 
+    // <<< 1. AMBIL HANDLER DARI CONTEXT >>>
+    const { login } = useAuth(); 
+    // <<< ------------------------------ >>>
 
     const [formData, setFormData] = useState({
         email: '', 
@@ -27,20 +34,23 @@ export default function LoginForm() {
 
         // 1. Validasi Input Kosong
         if (!formData.email || !formData.password) {
-            setError('Email dan Password wajib diisi, Bro! Jangan sampai kosong ya.');
+            setError('Email dan Password wajib diisi, Bro-Sis! Jangan sampai kosong ya.');
             setIsLoading(false);
             return;
         }
 
         try {
             // 2. Pemanggilan API ke Backend Express (Port 4000)
-            const response = await fetch('http://localhost:4000/api/login', { // <<< AKAN KITA BUAT
+            // const response = await fetch('http://localhost:4000/api/login', { // <<< AKAN KITA BUAT
+            // <<< 2. GANTI URL LENGKAP DENGAN PATH RELATIF >>>
+            const response = await fetch('/api/login', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(formData),
             });
+            // <<< ---------------------------------------- >>>
 
             const data = await response.json();
 
@@ -51,16 +61,11 @@ export default function LoginForm() {
                 return;
             }
             
-            // 3. Sukses: Simpan Token (Jika ada) dan Redirect
-            // ==> alert(`Login Berhasil! Selamat datang, ${data.user.fullName || 'Affiliate'}.`);
-            // kode baris di atas dihilangkan karena kita tidak perlu alert.
-            // AuthService.setToken(data.token); // Simpan token
-            // Kode Baru:
-            AuthService.setAuth(data.token, data.user); // <<< PASTIKAN KAMU MENGGUNAKAN data.user
-
-            // Di sini, kamu harus menyimpan token JWT (data.token) ke Local Storage
-            // atau Cookies menggunakan helper dari src/lib/Auth.ts.
-            // Contoh sederhana: localStorage.setItem('authToken', data.token);
+            // 3. Sukses: Simpan Token menggunakan Context
+            if (data.token && data.user) {
+                // GANTI: AuthService.setAuth(data.token, data.user); 
+                login(data.token, data.user); // <<< GUNAKAN LOGIN DARI CONTEXT
+            }
 
             // Redirect ke Dashboard setelah login sukses
             router.push('/dashboard'); 
