@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 // import { AuthService } from '@/lib/Auth';
 
 // <<< GANTI DENGAN IMPORT CONTEXT BARU >>>
@@ -34,7 +35,7 @@ export default function LoginForm() {
 
         // 1. Validasi Input Kosong
         if (!formData.email || !formData.password) {
-            setError('Email dan Password wajib diisi, Bro-Sis! Jangan sampai kosong ya.');
+            setError("Email dan Password wajib diisi, Bro-Sis! Jangan sampai kosong ya.");
             setIsLoading(false);
             return;
         }
@@ -57,7 +58,7 @@ export default function LoginForm() {
             if (!response.ok) {
                 // Jika server merespon 400 (Kredensial salah) atau 500
                 // Pesan error datang dari server.
-                setError(data.message || 'Login gagal. Email atau Password salah.');
+                setError(data.message || "Login gagal. Email atau Password salah.");
                 return;
             }
             
@@ -75,7 +76,7 @@ export default function LoginForm() {
         } catch (err) {
             // Error Jaringan (misal, backend belum running)
             console.error('Network/Fetch Error:', err);
-            setError('Gagal terhubung ke server. Pastikan server backend sudah berjalan (Port 5000).');
+            setError("Gagal terhubung ke server. Pastikan server backend sudah berjalan (Port 5000).");
 
         } finally {
             setIsLoading(false);
@@ -138,7 +139,7 @@ export default function LoginForm() {
                 </form>
                 <p className="text-center text-sm text-gray-600 mt-6">
                     Don't have an account? 
-                    <a href="/signup" className="font-medium text-rose-gold hover:underline" aria-label="Switch to Sign Up page">Sign up here</a>
+                    <Link href="/signup" className="font-medium text-rose-gold hover:underline" aria-label="Switch to Sign Up page">Sign up here</Link>
                 </p>
             </div>
         </div>

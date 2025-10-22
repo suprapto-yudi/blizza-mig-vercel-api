@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 // === DUMMY DATABASE (Dihapus karena sekarang pakai Backend) ===
 // DUMMY_AFFILIATE_DB_SIGNUP sudah dihilangkan dari sini.
@@ -58,7 +59,7 @@ export default function SignupForm() {
                 // }
                 
                 // 3. Sukses: Redirect ke Login
-                setSuccess('Pendaftaran Berhasil! Mengarahkanmu ke halaman Login...');
+                setSuccess("Pendaftaran Berhasil! Mengarahkanmu ke halaman Login...");
                 
                 setTimeout(() => {
                     router.push('/login?success=true'); // Redirect ke Login
@@ -68,7 +69,7 @@ export default function SignupForm() {
             } else {
                 // 4. Gagal: Tampilkan pesan error dari backend
                 // Data dijamin ada karena kita panggil response.json() di atas
-                setError(data.message || 'Pendaftaran gagal karena masalah server.');
+                setError(data.message || "Pendaftaran gagal karena masalah server.");
                 setIsLoading(false);
                 return;
             }
@@ -76,7 +77,7 @@ export default function SignupForm() {
         } catch (err) {
             // Error Jaringan (misal, backend belum running)
             console.error('Network/Fetch Error:', err);
-            setError('Gagal terhubung ke server. Pastikan server backend sudah berjalan (Port 5000).');
+            setError("Gagal terhubung ke server. Pastikan server backend sudah berjalan (Port 5000).");
             setIsLoading(false);
 
         } finally {
@@ -145,7 +146,7 @@ export default function SignupForm() {
                 </form>
                 <p className="text-center text-sm text-gray-600 mt-6">
                     Already have an account? 
-                    <a href="/login" className="font-medium text-rose-gold hover:underline" aria-label="Switch to Login page">Login here</a>
+                    <Link href="/login" className="font-medium text-rose-gold hover:underline" aria-label="Switch to Login page">Login here</Link>
                 </p>
             </div>
         </div>

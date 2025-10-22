@@ -20,6 +20,7 @@ export async function PUT(request: Request) {
     
     // Mendapatkan user ID dari token
     // const { userId } = decodeToken(token); 
+    /*
     const decodedPayload = decodeToken(token); 
     const userId = decodedPayload?.userId; // Ambil userId hanya jika payload ada
     
@@ -35,6 +36,23 @@ export async function PUT(request: Request) {
     // PENTING: Jika kamu menggunakan parseInt di bawah, pastikan userId adalah number.
     // Asumsi userId di payload JWT adalah number, atau kita ubah ke number di sini:
     const userIdInt = parseInt(userId as any, 10); 
+    */
+
+    // Koreksi yang lebih aman (pastikan userId benar-benar ada)
+    const decodedPayload = decodeToken(token);
+    const userId = decodedPayload?.userId; // Tipe: number | undefined
+
+    if (userId === undefined || userId === null) { 
+        return new NextResponse(JSON.stringify({ message: 'Invalid token payload: User ID missing.' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' },
+        });
+     }
+
+    // Ganti parseInt(userId as any, 10) dengan pengecekan
+    // PENTING: Jika ID di DB kamu number, pastikan userId dari token adalah number/string yang valid.
+    const userIdNumber = Number(userId); // Atau pakai parseInt(userId, 10) jika ID selalu string
+    // Pastikan semua panggilan prisma.user.findUnique menggunakan userIdNumber.
 
     const { currentPassword, newPassword } = await request.json();
 
@@ -56,7 +74,7 @@ export async function PUT(request: Request) {
     try {
         // 5. Ambil user (termasuk password hash-nya)
         const user = await prisma.user.findUnique({
-            where: { id: userIdInt }, // <<< GUNAKAN userIdInt
+            where: { id: userId }, // <<< GUNAKAN userIdInt
             select: { password: true }
         });
 
@@ -82,7 +100,7 @@ export async function PUT(request: Request) {
 
         // 8. Update Password di Database
         await prisma.user.update({
-            where: { id: userIdInt }, // <<< GUNAKAN userIdInt
+            where: { id: userId }, // <<< GUNAKAN userIdInt
             data: { password: newHashedPassword }
         });
 
