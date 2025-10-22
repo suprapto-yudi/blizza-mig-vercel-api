@@ -53,37 +53,6 @@ const SettingsContent = () => {
     const [isSaving, setIsSaving] = useState(false);
     const [isPasswordSaving, setIsPasswordSaving] = useState(false);
     // ------------------------------------------
-
-    /*
-    useEffect(() => {
-        // Ambil data user dari AuthService (Local Storage)
-        const user = AuthService.getUser();
-        if (user) {
-            setProfile(user);
-        }
-        setIsLoading(false);
-    }, []);
-    */
-
-    /*
-    // Placeholder untuk state form (untuk diimplementasi fitur edit nanti)
-    const [formData, setFormData] = useState({
-        fullName: profile?.fullName || '',
-        email: profile?.email || '',
-        phone: profile?.phone || '',
-        // tambahkan field lain jika ada
-    });
-
-    useEffect(() => {
-        if (profile) {
-            setFormData({
-                fullName: profile.fullName || '',
-                email: profile.email || '',
-                phone: profile.phone || '',
-            });
-        }
-    }, [profile]);
-    */
     
     // EFEK UNTUK SINKRONISASI (penting saat user berhasil login atau data user dimuat pertama)
     useEffect(() => {
@@ -147,7 +116,7 @@ const SettingsContent = () => {
                 // if (result.success && result.user) {
                     // AuthService.setAuth(token, result.user); 
                     // setProfile(result.user);
-                alert('✅ Profil berhasil diperbarui!');
+                alert("✅ Profil berhasil diperbarui!");
                 // } else {
                     // Ini seharusnya tidak terjadi jika backend benar
                     // alert('⚠️ Gagal: Respons sukses tapi data user tidak lengkap.');
@@ -158,10 +127,10 @@ const SettingsContent = () => {
             } else {
                 // **BLOK GAGAL:** Status Code 4xx atau 5xx
                 const errorMessage = result.message || response.statusText;
-                alert(`❌ Gagal memperbarui profil: ${errorMessage}`);
+                alert("❌ Gagal memperbarui profil: ${errorMessage}");
             }
 
-        } catch (error: any) {
+        } catch (_error) {
             // **BLOK GAGAL TEKNIS:** Kegagalan Jaringan/Koneksi
             /*
             let errorMessage = 'Gagal terhubung ke server. Pastikan server Express berjalan.';
@@ -169,7 +138,7 @@ const SettingsContent = () => {
                 errorMessage = error.message;
             }
             */
-            alert('❌ Gagal terhubung ke server. Pastikan server Express berjalan.');
+            alert("❌ Gagal terhubung ke server. Pastikan server Express berjalan.");
         } finally {
             setIsSaving(false);
         }
@@ -186,7 +155,7 @@ const SettingsContent = () => {
 
         // 1. Validasi input di sisi klien
         if (!currentPassword || !newPassword) {
-            alert('Password saat ini dan Password baru wajib diisi.');
+            alert("Password saat ini dan Password baru wajib diisi.");
             return;
         }
 
@@ -218,7 +187,7 @@ const SettingsContent = () => {
 
             if (response.ok) {
                 // Sukses: Password diganti
-                alert(`✅ ${result.message}`); 
+                alert("✅ ${result.message}"); 
 
                 // Hapus token dan redirect ke login (sesi lama kadaluarsa)
                 // AuthService.logout();
@@ -226,12 +195,12 @@ const SettingsContent = () => {
                 router.push('/login');
             } else {
                 // Gagal: Password lama salah, atau validasi gagal
-                const errorMessage = result.message || 'Gagal mengubah password karena kesalahan server.';
-                alert(`❌ ${errorMessage}`);
+                const errorMessage = result.message || "Gagal mengubah password karena kesalahan server.";
+                alert("❌ ${errorMessage}");
             }
 
-        } catch (error) {
-            alert('❌ Gagal terhubung ke server untuk mengubah password.');
+        } catch (_error) {
+            alert("❌ Gagal terhubung ke server untuk mengubah password.");
         } finally {
             // Bersihkan form
             setPasswordData({ currentPassword: '', newPassword: '' });

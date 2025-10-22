@@ -133,12 +133,12 @@ export default function LoginForm() {
                             aria-label="Log in to your account"
                             disabled={isLoading}
                         >
-                            {isLoading ? 'Processing...' : 'Login'}
+                            {isLoading ? "Processing..." : "Login"}
                         </button>
                     </div>
                 </form>
                 <p className="text-center text-sm text-gray-600 mt-6">
-                    Don't have an account? 
+                    Don&apos;t have an account?
                     <Link href="/signup" className="font-medium text-rose-gold hover:underline" aria-label="Switch to Sign Up page">Sign up here</Link>
                 </p>
             </div>
