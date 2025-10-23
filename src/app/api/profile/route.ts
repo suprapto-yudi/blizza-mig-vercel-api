@@ -17,13 +17,28 @@ export async function PUT(request: Request) {
         });
     }
 
-    const { userId } = decodeToken(token); // Mendapatkan user ID dari token
+    // const { userId } = decodeToken(token); // Mendapatkan user ID dari token
+    // KOREKSI 1: Ambil payload dulu (payload bisa null)
+    const payload = decodeToken(token);
+
+    // KOREKSI 2: Cek payload dan ekstrak userId
+    if (!payload || !payload.userId) { 
+        // Jika payload kosong atau userId tidak ada di dalamnya
+        return new NextResponse(JSON.stringify({ message: 'Invalid token payload or missing User ID.' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' },
+        });
+    }
+
+    // KOREKSI 3: Deklarasikan userId dari payload yang sudah divalidasi
+    // Asumsi userId di payload kamu adalah number atau string yang bisa di-parseInt
+    const userId = payload.userId;
     const { fullName, phone } = await request.json();
 
     try {
         // 2. Update User di Database
         const updatedUser = await prisma.user.update({
-            where: { id: parseInt(userId) },
+            where: { id: parseInt(String(userId), 10) }, // Gunakan String(userId) agar pasti string sebelum parseInt
             data: {
                 fullName,
                 phone,
