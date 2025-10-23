@@ -127,18 +127,12 @@ const SettingsContent = () => {
             } else {
                 // **BLOK GAGAL:** Status Code 4xx atau 5xx
                 const errorMessage = result.message || response.statusText;
-                alert("❌ Gagal memperbarui profil: ${errorMessage}");
+                alert('❌ Gagal memperbarui profil: ${errorMessage}');
             }
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (_error) {
-            // **BLOK GAGAL TEKNIS:** Kegagalan Jaringan/Koneksi
-            /*
-            let errorMessage = 'Gagal terhubung ke server. Pastikan server Express berjalan.';
-            if (error.message) {
-                errorMessage = error.message;
-            }
-            */
-            alert("❌ Gagal terhubung ke server. Pastikan server Express berjalan.");
+            alert('❌ Gagal terhubung ke server. Pastikan server Express berjalan.');
         } finally {
             setIsSaving(false);
         }
@@ -196,11 +190,12 @@ const SettingsContent = () => {
             } else {
                 // Gagal: Password lama salah, atau validasi gagal
                 const errorMessage = result.message || "Gagal mengubah password karena kesalahan server.";
-                alert("❌ ${errorMessage}");
+                alert('❌ ${errorMessage}');
             }
-
+        
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (_error) {
-            alert("❌ Gagal terhubung ke server untuk mengubah password.");
+            alert('❌ Gagal terhubung ke server untuk mengubah password.');
         } finally {
             // Bersihkan form
             setPasswordData({ currentPassword: '', newPassword: '' });

@@ -1,5 +1,6 @@
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import React from 'react';
+import Image from 'next/image';
 
 // Component utama untuk konten Rewards
 const RewardsContent = () => {
@@ -36,7 +37,7 @@ const RewardsContent = () => {
 
         return (
             <div className="bg-white p-4 rounded-2xl shadow-xl flex flex-col justify-between transform transition duration-300 hover:scale-[1.02] border-2 border-pale-pink">
-                <img src={image} alt={name} className="w-full h-32 object-cover rounded-xl mb-4"/>
+                <Image src={image} alt={name} className="w-full h-32 object-cover rounded-xl mb-4"/>
                 <div className="flex flex-col flex-grow">
                     <h3 className="text-xl font-extrabold text-pink-600 mb-1">{name}</h3>
                     <p className="text-lg font-semibold text-rose-gold mb-3">{points.toLocaleString()} Points</p>
