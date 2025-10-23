@@ -31,7 +31,7 @@ export const verifyToken = (token: string): boolean => {
     try {
         jwt.verify(token, secret);
         return true;
-    } catch (error) {
+    } catch (_error) {
         // console.error("Token verification failed:", error);
         return false;
     }
@@ -43,7 +43,7 @@ export const decodeToken = (token: string): JwtPayload | null => {
         // jwt.decode hanya membaca data tanpa memverifikasi signature/expiry.
         const decoded = jwt.decode(token) as JwtPayload;
         return decoded;
-    } catch (error) {
+    } catch (_error) {
         return null;
     }
 };

@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 return { token, user: JSON.parse(userString) as User };
             }
             return { token: null, user: null };
-        } catch (error) {
+        } catch (_error) {
             return { token: null, user: null };
         }
     };
@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(userData));
-        } catch (error) {
+        } catch (_error) {
             // Handle error jika Local Storage penuh/tidak tersedia
         }
     };
@@ -63,7 +63,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-        } catch (error) {
+        } catch (_error) {
             // Handle error
         }
     };
