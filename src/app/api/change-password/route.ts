@@ -19,8 +19,6 @@ export async function PUT(request: Request) {
     }
     
     // Mendapatkan user ID dari token
-    
-    
     // 3. Ambil data dari Frontend
     // Koreksi yang lebih aman (pastikan userId benar-benar ada)
     const decodedPayload = decodeToken(token);
@@ -36,9 +34,7 @@ export async function PUT(request: Request) {
     // Ganti parseInt(userId as any, 10) dengan pengecekan
     // PENTING: Jika ID di DB kamu number, pastikan userId dari token adalah number/string yang valid.
     const userIdNumber = Number(userId); // Atau pakai parseInt(userId, 10) jika ID selalu string
-
     const { currentPassword, newPassword } = await request.json();
-
 
     // 4. Validasi Input Dasar
     if (!currentPassword || !newPassword) {
