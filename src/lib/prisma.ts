@@ -1,15 +1,22 @@
 // src/lib/prisma.ts
+
 import { PrismaClient } from '@prisma/client';
 
-// Ini mencegah inisialisasi PrismaClient berkali-kali di development (Hot Reload)
-const prismaClientSingleton = () => {
-  return new PrismaClient();
+// 1. Tipe Global (untuk mencegah inisialisasi ganda di development/hot reload)
+const globalForPrisma = global as unknown as {
+  prisma: PrismaClient | undefined;
 };
 
-const prisma = globalThis.prisma || prismaClientSingleton();
+// 2. Buat instance PrismaClient baru HANYA jika belum ada
+export const prisma = globalForPrisma.prisma ?? new PrismaClient({
+  // Tambahkan log level untuk debugging jika perlu
+  log: ['warn', 'error'], 
+});
 
-export default prisma;
+// 3. Simpan di globalForPrisma HANYA di environment development
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma;
+}
 
-if (process.env.NODE_ENV !== 'production') globalThis.prisma = prisma;
-
-export { prisma }; // Export bernama
+// Catatan: Di API Routes kamu, kamu harus mengimpornya dengan: 
+// import { prisma } from '@/lib/prisma';
