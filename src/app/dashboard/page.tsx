@@ -1,6 +1,6 @@
 'use client'; 
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 // import { apiFetch } from '@/lib/ApiService'; // Service untuk API Call (dengan JWT)
 import { useAuth } from '@/lib/AuthContext'; // PENTING: Tambahkan import ini!
 import { RocketIcon, CrossCircledIcon } from '@radix-ui/react-icons'; 
@@ -17,9 +17,9 @@ interface Todo {
 }
 
 // Tipe data respons API untuk array ToDo
-interface TodoResponse {
-    todos: Todo[];
-}
+// interface TodoResponse {
+//     todos: Todo[];
+// }
 
 
 const DashboardContent = () => {
@@ -58,7 +58,7 @@ const DashboardContent = () => {
     // --------------------------------------------------------------------------
 
     // 2. DATA FETCHING (READ /todos) - Dibuat Reusable
-    const fetchTodos = useCallback(async () => {
+    const fetchTodos = async () => { // <<< REVISI: Hapus useCallback(...)
         setIsLoading(true);
         setError(null);
         
@@ -73,18 +73,20 @@ const DashboardContent = () => {
             } else {
                 setError(result.message || 'Gagal mengambil data To-Do List.');
             }
-        } catch (e) {
+        } catch (_e) {
             // Error ditangkap dari secureFetch jika tidak ada token
             if (error === null) setError('Gagal terhubung ke server atau sesi berakhir.');
         }
 
         setIsLoading(false);
-    }, [token, setError, setIsLoading]); // Tambahkan token, setError, setIsLoading sebagai dependencies 
+    }; 
 
     // Panggil fetchTodos saat component mount
     useEffect(() => {
+        // Karena fetchTodos tidak menggunakan useCallback, ia akan dibuat ulang
+        // setiap render. Kita harus menggunakan dependency array yang benar.
         fetchTodos();
-    }, [fetchTodos]); 
+    }, [token, setError, setIsLoading, secureFetch]); // <<< REVISI: Semua dependencies dimasukkan
     
     
     // 3. LOGIC HANDLE CREATE TODO (POST /todos)

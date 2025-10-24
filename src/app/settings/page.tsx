@@ -116,7 +116,7 @@ const SettingsContent = () => {
                 // if (result.success && result.user) {
                     // AuthService.setAuth(token, result.user); 
                     // setProfile(result.user);
-                alert("✅ Profil berhasil diperbarui!");
+                alert('✅ Profil berhasil diperbarui!');
                 // } else {
                     // Ini seharusnya tidak terjadi jika backend benar
                     // alert('⚠️ Gagal: Respons sukses tapi data user tidak lengkap.');
@@ -126,8 +126,8 @@ const SettingsContent = () => {
 
             } else {
                 // **BLOK GAGAL:** Status Code 4xx atau 5xx
-                const errorMessage = result.message || response.statusText;
-                alert('❌ Gagal memperbarui profil: ${errorMessage}');
+                // const errorMessage = result.message || response.statusText;
+                alert(`❌ Gagal memperbarui profil: ${result.message || response.statusText}`);
             }
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -189,8 +189,8 @@ const SettingsContent = () => {
                 router.push('/login');
             } else {
                 // Gagal: Password lama salah, atau validasi gagal
-                const errorMessage = result.message || "Gagal mengubah password karena kesalahan server.";
-                alert('❌ ${errorMessage}');
+                // const errorMessage = result.message || "Gagal mengubah password karena kesalahan server.";
+                alert(`❌ ${result.message || "Gagal mengubah password karena kesalahan server."}`);
             }
         
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
