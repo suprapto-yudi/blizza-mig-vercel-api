@@ -34,7 +34,7 @@ const DashboardContent = () => {
     const [isPosting, setIsPosting] = useState(false);
 
     // FUNGSI HELPER BARU UNTUK FETCH DATA (MENGGANTIKAN apiFetch)
-    const secureFetch = async (endpoint: string, options?: RequestInit) => {
+    const secureFetch = useCallback(async (endpoint: string, options?: RequestInit) => {
         if (!token) {
             setError(`Sesi kedaluwarsa. Silakan login ulang.`);
             setIsLoading(false);
@@ -54,7 +54,7 @@ const DashboardContent = () => {
         });
         
         return response;
-    };
+    }, [token, setError, setIsLoading]); // <<< Dependencies secureFetch hanya token, setError, setIsLoading
     // --------------------------------------------------------------------------
 
     // 2. DATA FETCHING (READ /todos) - Dibuat Reusable
