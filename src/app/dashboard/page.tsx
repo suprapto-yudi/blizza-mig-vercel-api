@@ -1,6 +1,6 @@
 'use client'; 
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 // import { apiFetch } from '@/lib/ApiService'; // Service untuk API Call (dengan JWT)
 import { useAuth } from '@/lib/AuthContext'; // PENTING: Tambahkan import ini!
 import { RocketIcon, CrossCircledIcon } from '@radix-ui/react-icons'; 
@@ -36,7 +36,7 @@ const DashboardContent = () => {
     // FUNGSI HELPER BARU UNTUK FETCH DATA (MENGGANTIKAN apiFetch)
     const secureFetch = async (endpoint: string, options?: RequestInit) => {
         if (!token) {
-            setError('Sesi kedaluwarsa. Silakan login ulang.');
+            setError(`Sesi kedaluwarsa. Silakan login ulang.`);
             setIsLoading(false);
             throw new Error('No token available');
         }
@@ -58,7 +58,7 @@ const DashboardContent = () => {
     // --------------------------------------------------------------------------
 
     // 2. DATA FETCHING (READ /todos) - Dibuat Reusable
-    const fetchTodos = async () => { // <<< REVISI: Hapus useCallback(...)
+    const fetchTodos = useCallback(async () => {
         setIsLoading(true);
         setError(null);
         
@@ -71,22 +71,23 @@ const DashboardContent = () => {
             if (response.ok && result.todos) { // Cek response.ok dan result.todos
                 setTodos(result.todos);
             } else {
-                setError(result.message || 'Gagal mengambil data To-Do List.');
+                setError(result.message || `Gagal mengambil data To-Do List.`);
             }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (_e) {
             // Error ditangkap dari secureFetch jika tidak ada token
-            if (error === null) setError('Gagal terhubung ke server atau sesi berakhir.');
+            if (error === null) setError(`Gagal terhubung ke server atau sesi berakhir.`);
         }
 
         setIsLoading(false);
-    }; 
+    }, [token, setError, setIsLoading, secureFetch]); // <<< HARUS TEPAT DI SINI
 
     // Panggil fetchTodos saat component mount
     useEffect(() => {
         // Karena fetchTodos tidak menggunakan useCallback, ia akan dibuat ulang
         // setiap render. Kita harus menggunakan dependency array yang benar.
         fetchTodos();
-    }, [token, setError, setIsLoading, secureFetch]); // <<< REVISI: Semua dependencies dimasukkan
+    }, [fetchTodos]); // <<< Dependency: [fetchTodos] (Ini sekarang benar)
     
     
     // 3. LOGIC HANDLE CREATE TODO (POST /todos)
@@ -114,7 +115,7 @@ const DashboardContent = () => {
             setTodos(prevTodos => [result.data!.todo, ...prevTodos]); // Tambah di awal list
             setNewTodoTitle(''); 
         } else {
-            alert('Gagal membuat To-Do: ${result.message}');
+            alert(`Gagal membuat To-Do: ${result.message}`);
         }
 
         setIsPosting(false);
@@ -143,7 +144,7 @@ const DashboardContent = () => {
         // Handle response
         if (!response.ok) {
             // Rollback jika API gagal
-            alert(result.message || "Gagal update status! Koneksi terputus atau token kadaluarsa.");
+            alert(result.message || `Gagal update status! Koneksi terputus atau token kadaluarsa.`);
             fetchTodos(); // Re-fetch data yang benar
         }
         // Tidak perlu update state lagi karena sudah di-update secara optimis di awal
@@ -151,7 +152,7 @@ const DashboardContent = () => {
 
     // --- LOGIC HANDLE DELETE TODO (DELETE /todos/:id) ---
     const handleDeleteTodo = async (todoId: number) => {
-        if (!confirm("Yakin ingin menghapus To-Do ini?")) return; // Konfirmasi hapus
+        if (!confirm(`Yakin ingin menghapus To-Do ini?`)) return; // Konfirmasi hapus
 
         // const result = await apiFetch<any>(`/todos/${todoId}`, {
         const response = await secureFetch(`/todos/${todoId}`, { // <<< GANTI
@@ -166,7 +167,7 @@ const DashboardContent = () => {
             // Update UI: Hapus ToDo dari state lokal
             setTodos(prevTodos => prevTodos.filter(t => t.id !== todoId));
         } else {
-            alert("Gagal menghapus To-Do: " + (result.message || response.statusText));
+            alert(`Gagal menghapus To-Do: ` + (result.message || response.statusText));
         }
     };
 
