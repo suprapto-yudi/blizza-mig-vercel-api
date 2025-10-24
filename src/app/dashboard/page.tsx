@@ -80,7 +80,7 @@ const DashboardContent = () => {
         }
 
         setIsLoading(false);
-    }, [token, setError, setIsLoading, secureFetch, error]); // <<< HARUS TEPAT DI SINI
+    }, [setError, setIsLoading, secureFetch, error]); // <<< HARUS TEPAT DI SINI
 
     // Panggil fetchTodos saat component mount
     useEffect(() => {
