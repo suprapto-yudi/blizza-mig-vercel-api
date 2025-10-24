@@ -45,6 +45,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 return { token, user: JSON.parse(userString) as User };
             }
             return { token: null, user: null };
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (_error) {
             return { token: null, user: null };
         }
@@ -54,8 +55,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(userData));
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (_error) {
-            // Handle error jika Local Storage penuh/tidak tersedia
+            // Tindakan Darurat: Karena gagal simpan ke Local Storage, 
+            // kita hapus token di memori dan Local Storage (jika ada) 
+            // untuk mencegah inkonsistensi.
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
         }
     };
 
@@ -63,6 +69,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (_error) {
             // Handle error
         }

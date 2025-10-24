@@ -31,6 +31,7 @@ export const verifyToken = (token: string): boolean => {
     try {
         jwt.verify(token, secret);
         return true;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
         // console.error("Token verification failed:", error);
         return false;
@@ -43,6 +44,7 @@ export const decodeToken = (token: string): JwtPayload | null => {
         // jwt.decode hanya membaca data tanpa memverifikasi signature/expiry.
         const decoded = jwt.decode(token) as JwtPayload;
         return decoded;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
         return null;
     }
