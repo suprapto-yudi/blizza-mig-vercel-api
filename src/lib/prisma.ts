@@ -1,16 +1,24 @@
-// src/lib/prisma.ts (Koreksi Sederhana)
+// src/lib/prisma.ts (Revisi Akhir Final)
 
-// Gunakan named import, ini seringkali berhasil setelah clean install
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'; 
 
+// 1. Definisikan tipe global
 const globalForPrisma = global as unknown as {
-  prisma: PrismaClient | undefined;
+  prisma: PrismaClient | undefined;
 };
 
-export const prisma = globalForPrisma.prisma || new PrismaClient({
-  log: ['warn', 'error'],
+// 2. Buat instance dengan konfigurasi datasources
+export const prisma = globalForPrisma.prisma ?? new PrismaClient({
+    // Solusi Vercel: Memaksa Prisma menggunakan ENV di build time
+    datasources: {
+        db: {
+            url: process.env.DATABASE_URL,
+        },
+    },
+    log: ['warn', 'error'],
 });
 
+// 3. Simpan di globalForPrisma HANYA di environment development
 if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma;
+  globalForPrisma.prisma = prisma;
 }
