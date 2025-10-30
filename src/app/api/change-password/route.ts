@@ -1,7 +1,6 @@
 // src/app/api/change-password/route.ts
+import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
-// Pastikan kamu sudah meng-copy file ini ke src/lib/
-import { prisma } from '@/lib/prisma'; 
 import bcrypt from 'bcryptjs';
 import { verifyToken, decodeToken } from '@/lib/auth-helpers'; // Asumsi JWT helper
 
