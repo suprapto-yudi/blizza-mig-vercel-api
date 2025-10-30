@@ -1,7 +1,7 @@
 // src/app/layout.tsx
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 // --- (1) Pertahankan Import Font Geist ---
-import { Geist, Geist_Mono } from "next/font/google"; 
+import { Geist, Geist_Mono } from 'next/font/google'; 
 import "./globals.css";
 import RootProvider from '@/components/providers/RootProvider'; // Import provider wrapper
 

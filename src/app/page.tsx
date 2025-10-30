@@ -1,23 +1,13 @@
+// src/app/page.tsx 
+// 'use client'; 
+// import React from 'react';
+import HeaderClient from '@/components/layout/HeaderClient';
 export default function Page() {
   return (
     // Container for the entire page
     <div className="min-h-screen bg-grid-pattern overflow-hidden text-gray-800">
-      
-      {/* Header */}
-      <header className="container mx-auto px-6 py-6">
-        <div className="flex items-center justify-between">
-          <div className="text-2xl font-bold text-rose-gold">
-            Blizza
-          </div>
-          {/* PERUBAHAN 1: Tombol Affiliate Login mengarah ke /login */}
-          <a 
-            href="/login" 
-            className="hidden md:inline-block px-6 py-2 text-sm font-semibold text-rose-gold border border-rose-gold rounded-full hover:bg-rose-gold hover:text-white transition-colors duration-300"
-          >
-            Affiliate Login
-          </a>
-        </div>
-      </header>
+      {/* Header Section */}
+      <HeaderClient />
 
       {/* Hero Section */}
       <main className="container mx-auto px-6 text-center mt-16 md:mt-24">
