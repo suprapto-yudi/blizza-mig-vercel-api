@@ -9,8 +9,7 @@
     "dev": "next dev --turbopack",
     "build": "npx prisma generate --schema=./prisma/schema.prisma && next build",
     "start": "next start",
-    "lint": "eslint",
-    "postinstall": "npx prisma generate"
+    "lint": "eslint"
   },
   "dependencies": {
     "@prisma/client": "^6.17.1",
