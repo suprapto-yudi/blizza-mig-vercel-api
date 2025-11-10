@@ -2,12 +2,10 @@
   "name": "blizza-affiliate",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "node": ">=18.x"
-  },
+  
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "npx prisma generate --schema=./prisma/schema.prisma && next build",
+    "build": "npx prisma generate && next build",
     "start": "next start",
     "lint": "eslint"
   },
