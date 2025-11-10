@@ -41,7 +41,7 @@ export default function SignupForm() {
             // 2. Pemanggilan API ke Backend Express (Port 4000)
             // const response = await fetch('http://localhost:4000/api/login', { // <<< AKAN KITA BUAT
             // <<< 2. GANTI URL LENGKAP DENGAN PATH RELATIF >>>
-            const response = await fetch('/api/login', {
+            const response = await fetch('/api/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -79,7 +79,7 @@ export default function SignupForm() {
         } catch (err) {
             // Error Jaringan (misal, backend belum running)
             console.error("Network/Fetch Error:", err);
-            setError("Gagal terhubung ke server. Pastikan server backend sudah berjalan (Port 5000).");
+            setError("Gagal terhubung ke server. Pastikan API server sudah berjalan.");
             setIsLoading(false);
 
         } finally {
