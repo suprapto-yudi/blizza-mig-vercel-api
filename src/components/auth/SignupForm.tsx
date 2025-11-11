@@ -38,9 +38,6 @@ export default function SignupForm() {
         }
 
         try {
-            // 2. Pemanggilan API ke Backend Express (Port 4000)
-            // const response = await fetch('http://localhost:4000/api/login', { // <<< AKAN KITA BUAT
-            // <<< 2. GANTI URL LENGKAP DENGAN PATH RELATIF >>>
             const response = await fetch('/api/signup', {
                 method: 'POST',
                 headers: {
@@ -54,13 +51,6 @@ export default function SignupForm() {
             // ----------------------------------------------------
 
             if (response.ok) {
-                // Asumsi: Backend mengirimkan token dan user saat Sign Up sukses
-                // NOTE: Kita fokus pada redirect ke Login dulu, autologin diabaikan sementara
-                // if (data.token && data.user) {
-                //     AuthService.setAuth(data.token, data.user); 
-                // }
-                
-                // 3. Sukses: Redirect ke Login
                 setSuccess("Pendaftaran Berhasil! Mengarahkanmu ke halaman Login...");
                 
                 setTimeout(() => {
