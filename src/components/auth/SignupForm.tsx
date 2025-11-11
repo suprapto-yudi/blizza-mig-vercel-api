@@ -47,24 +47,33 @@ export default function SignupForm() {
             });
 
             // <<< PERBAIKAN: Ambil JSON response HANYA SEKALI >>>
-            const data = await response.json(); 
+            // const data = await response.json(); 
             // ----------------------------------------------------
 
             if (response.ok) {
+                const data = await response.json();
                 setSuccess("Pendaftaran Berhasil! Mengarahkanmu ke halaman Login...");
-                
                 setTimeout(() => {
                     router.push('/login?success=true'); // Redirect ke Login
                 }, 1500); 
                 return;
 
-            } else {
-                // 4. Gagal: Tampilkan pesan error dari backend
-                // Data dijamin ada karena kita panggil response.json() di atas
-                setError(data.message || "Pendaftaran gagal karena masalah server.");
-                setIsLoading(false);
-                return;
-            }
+            // KASUS ERROR HTTP (4xx atau 5xx)
+            } else {
+                // 1. Coba ambil pesan error dari body
+                let errorMessage = "Pendaftaran gagal karena masalah server.";
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorMessage;
+                } catch (e) {
+                    // Jika body bukan JSON (misal HTML 500 dari Netlify), gunakan status
+                    errorMessage = `Server Error (Status ${response.status}). Cek log Netlify.`;
+                }
+                
+                setError(errorMessage);
+                setIsLoading(false);
+                return;
+            }
 
         } catch (err) {
             // Error Jaringan (misal, backend belum running)
