@@ -24,8 +24,8 @@ model User {
   email           String   @unique 
   password        String   
   fullName        String
-  phone           String
-  shopeeAccount   String
+  phone           String  @unique
+  shopeeAccount   String  @unique
   address         String
   createdAt       DateTime @default(now())
 
