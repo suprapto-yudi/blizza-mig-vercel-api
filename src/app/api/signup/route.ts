@@ -2,7 +2,11 @@
 
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma'; // Sesuaikan path ini jika perlu
-// import { hashPassword } from '@/lib/auth-helper'; // Jika kamu punya helper hash password
+import { Prisma } from '@prisma/client';
+
+// Jika import di atas gagal, coba ganti menjadi:
+// import { PrismaClientKnownRequestError } from '@prisma/client';
+// Lalu gunakan 'error instanceof PrismaClientKnownRequestError'
 
 export async function POST(request: Request) {
     try {
@@ -51,7 +55,25 @@ export async function POST(request: Request) {
         });
 
     } catch (error) {
-        console.error("Error creating new user:", error);
+        // Cek jika error adalah error unik Prisma (P2002)
+        if (error && typeof error === 'object' && 'code' in error) {
+            if (error.code === 'P2002') {
+                // Error duplikat (misal: email sudah ada)
+                console.error("Signup failed: Duplicate key error (P2002)");
+                return new NextResponse(JSON.stringify({ 
+                    message: 'Email atau Shopee Account sudah terdaftar. Gunakan data lain.' 
+                }), { 
+                    status: 409 // 409 Conflict
+                });
+            }
+        }
+        // Type Guard untuk Unknown Error (sesuai standar TypeScript)
+        if (error instanceof Error) {
+            console.error("Error creating new user:", error.message);
+        } else {
+            console.error("Unknown error creating new user:", error);
+        }
+        
         return new NextResponse(JSON.stringify({ message: 'Gagal memproses pendaftaran.' }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
