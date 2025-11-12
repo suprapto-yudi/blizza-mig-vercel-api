@@ -2,7 +2,6 @@
 
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma'; // Sesuaikan path ini jika perlu
-import { Prisma } from '@prisma/client';
 
 // Jika import di atas gagal, coba ganti menjadi:
 // import { PrismaClientKnownRequestError } from '@prisma/client';
@@ -55,11 +54,14 @@ export async function POST(request: Request) {
         });
 
     } catch (error) {
-        // Cek jika error adalah error unik Prisma (P2002)
-        if (error && typeof error === 'object' && 'code' in error) {
+        // --- MENGHILANGKAN ANY DAN MEMPERBAIKI TYPE GUARD ---
+        // Cek apakah error memiliki properti 'code' (seperti error Prisma)
+
+        if (error && typeof error === 'object' && 'code' in error && 'message' in error) {
             if (error.code === 'P2002') {
-                // AMBIL DETAIL FIELD YANG DUPLIKAT DARI error.meta
-                const target = (error as any).meta?.target || 'field'; // Ambil field yang bermasalah
+                // Mengambil target field dari error.meta jika tersedia
+                // Jika ada properti meta, kita ambil target, jika tidak ada, default ke 'field'
+                const target = (error as { meta?: { target?: string } }).meta?.target || 'field';
                 
                 // Error duplikat (misal: email sudah ada)
                 console.error("Signup failed: Duplicate key error (P2002) on:", target);
