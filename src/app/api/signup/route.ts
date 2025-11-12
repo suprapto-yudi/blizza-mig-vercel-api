@@ -58,10 +58,13 @@ export async function POST(request: Request) {
         // Cek jika error adalah error unik Prisma (P2002)
         if (error && typeof error === 'object' && 'code' in error) {
             if (error.code === 'P2002') {
+                // AMBIL DETAIL FIELD YANG DUPLIKAT DARI error.meta
+                const target = (error as any).meta?.target || 'field'; // Ambil field yang bermasalah
+                
                 // Error duplikat (misal: email sudah ada)
-                console.error("Signup failed: Duplicate key error (P2002)");
+                console.error("Signup failed: Duplicate key error (P2002) on:", target);
                 return new NextResponse(JSON.stringify({ 
-                    message: 'Email atau Shopee Account sudah terdaftar. Gunakan data lain.' 
+                    message: `Gagal mendaftar: ${target} ini sudah terdaftar. Mohon ganti data.`
                 }), { 
                     status: 409 // 409 Conflict
                 });
