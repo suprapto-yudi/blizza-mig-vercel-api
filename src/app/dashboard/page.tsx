@@ -76,11 +76,11 @@ const DashboardContent = () => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (_e) {
             // Error ditangkap dari secureFetch jika tidak ada token
-            if (error === null) setError(`Gagal terhubung ke server atau sesi berakhir.`);
+            console.error("Fetch Todos Failed:", _e);
         }
 
         setIsLoading(false);
-    }, [setError, setIsLoading, secureFetch, error]); // <<< HARUS TEPAT DI SINI
+    }, [setError, setIsLoading, secureFetch]); // <<< HARUS TEPAT DI SINI
 
     // Panggil fetchTodos saat component mount
     useEffect(() => {
