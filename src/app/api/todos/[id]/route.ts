@@ -1,6 +1,6 @@
 // src/app/api/todos/[id]/route.ts
 
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server'; // Import NextRequest
 import { prisma } from '@/lib/prisma';
 import jwt from 'jsonwebtoken'; 
 
@@ -29,8 +29,9 @@ const authenticateRequest = (request: Request) => {
 // 1. HANDLER PUT (UPDATE STATUS isCompleted)
 // ===============================================
 export async function PUT(
-    request: Request, 
-    { params }: { params: { id: string } } // Menerima parameter { id }
+    request: NextRequest, // Argument pertama harus NextRequest/Request
+    // ARGUMEN KEDUA HARUS MEMILIKI TIPE SPESIFIK INI:
+    { params }: { params: { id: string } } 
 ) {
     const verifiedUserId = authenticateRequest(request);
     
@@ -41,7 +42,7 @@ export async function PUT(
     try {
         const todoId = parseInt(params.id); // Konversi string ID dari URL ke integer
         const body = await request.json();
-        const { isCompleted } = body; // Kita hanya butuh isCompleted dari body
+        const { isCompleted } = body; 
 
         // 3. Update data di Prisma:
         const updatedTodo = await prisma.todo.update({
@@ -50,8 +51,7 @@ export async function PUT(
                 userId: verifiedUserId // WAJIB: Hanya user pemilik yang bisa update
             }, 
             data: { 
-                isCompleted: isCompleted, // Perubahan status
-                // Kamu bisa menambahkan updatedAt: new Date(), jika ada di skema
+                isCompleted: isCompleted,
             },
         });
 
@@ -72,7 +72,8 @@ export async function PUT(
 // 2. HANDLER DELETE (HAPUS TO-DO)
 // ===============================================
 export async function DELETE(
-    request: Request, 
+    request: NextRequest, // Argument pertama harus NextRequest/Request
+    // ARGUMEN KEDUA HARUS MEMILIKI TIPE SPESIFIK INI:
     { params }: { params: { id: string } }
 ) {
     const verifiedUserId = authenticateRequest(request);
@@ -93,9 +94,7 @@ export async function DELETE(
         });
 
         // Response Sukses (204 No Content)
-        return new NextResponse(JSON.stringify({ 
-            message: 'To-Do berhasil dihapus.'
-        }), { status: 204 }); 
+        return new NextResponse(null, { status: 204 }); // Kembalikan null untuk 204
 
     } catch (error) {
         console.error("Error deleting ToDo:", error);
