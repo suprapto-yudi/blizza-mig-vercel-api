@@ -112,7 +112,7 @@ const DashboardContent = () => {
         if (response.ok && result.todo)
         {
             // Update UI secara optimis
-            setTodos(prevTodos => [result.data!.todo, ...prevTodos]); // Tambah di awal list
+            setTodos(prevTodos => [result.todo as Todo, ...prevTodos]); // Tambah di awal list
             setNewTodoTitle(''); 
         } else {
             alert(`Gagal membuat To-Do: ${result.message}`);
