@@ -76,7 +76,7 @@ export default function LoginForm() {
         } catch (err) {
             // Error Jaringan (misal, backend belum running)
             console.error("Network/Fetch Error:", err);
-            setError("Gagal terhubung ke server. Pastikan server backend sudah berjalan (Port 5000).");
+            setError("Gagal terhubung ke server. Pastikan API server sudah berjalan.");
 
         } finally {
             setIsLoading(false);
