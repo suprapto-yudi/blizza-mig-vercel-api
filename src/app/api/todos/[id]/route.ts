@@ -29,8 +29,10 @@ const authenticateRequest = (request: Request) => {
 // 1. HANDLER PUT (UPDATE STATUS isCompleted)
 // ===============================================
 export async function PUT(
-    request: NextRequest, // Argument pertama harus NextRequest/Request
-    // ARGUMEN KEDUA HARUS MEMILIKI TIPE SPESIFIK INI:
+    // Argumen pertama: Harus NextRequest atau Request
+    request: NextRequest, 
+    // Argumen kedua: Destructuring langsung parameter 'params'
+    // Next.js secara internal menyediakan konteks ini
     { params }: { params: { id: string } } 
 ) {
     const verifiedUserId = authenticateRequest(request);
@@ -72,8 +74,9 @@ export async function PUT(
 // 2. HANDLER DELETE (HAPUS TO-DO)
 // ===============================================
 export async function DELETE(
-    request: NextRequest, // Argument pertama harus NextRequest/Request
-    // ARGUMEN KEDUA HARUS MEMILIKI TIPE SPESIFIK INI:
+    // Argumen pertama: Harus NextRequest atau Request
+    request: NextRequest, 
+    // Argumen kedua: Destructuring langsung parameter 'params'
     { params }: { params: { id: string } }
 ) {
     const verifiedUserId = authenticateRequest(request);
@@ -94,7 +97,7 @@ export async function DELETE(
         });
 
         // Response Sukses (204 No Content)
-        return new NextResponse(null, { status: 204 }); // Kembalikan null untuk 204
+        return new NextResponse(null, { status: 204 }); 
 
     } catch (error) {
         console.error("Error deleting ToDo:", error);
