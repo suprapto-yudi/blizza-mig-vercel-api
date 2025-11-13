@@ -63,3 +63,37 @@ export async function POST(request: Request) {
         });
     }
 }
+
+export async function GET(request: Request) {
+    // Gunakan kembali logic verifikasi token
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null;
+    
+    const userId = token ? getUserIdFromToken(token) : null;
+
+    if (!userId) {
+        return new NextResponse(JSON.stringify({ message: 'Unauthorized: Token invalid atau hilang.' }), { status: 401 });
+    }
+
+    try {
+        // Ambil semua To-Do untuk user ini
+        const todos = await prisma.todo.findMany({
+            where: { userId: userId },
+            orderBy: { createdAt: 'desc' },
+        });
+
+        return new NextResponse(JSON.stringify({ 
+            message: 'To-Do List berhasil dimuat.',
+            todos: todos 
+        }), { 
+            status: 200, 
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+    } catch (error) {
+        console.error("Error fetching ToDos:", error);
+        return new NextResponse(JSON.stringify({ message: 'Server error saat memuat To-Do.' }), {
+            status: 500,
+        });
+    }
+}
