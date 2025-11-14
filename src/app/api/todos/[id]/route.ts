@@ -1,6 +1,6 @@
 // src/app/api/todos/[id]/route.ts
 
-import { NextResponse, NextRequest } from 'next/server';
+import { NextResponse } from 'next/server'; // Hapus NextRequest, pakai Request/NextResponse saja
 import { prisma } from '@/lib/prisma';
 import jwt from 'jsonwebtoken'; 
 
@@ -24,13 +24,14 @@ const authenticateRequest = (request: Request) => {
     return token ? getUserIdFromToken(token) : null;
 };
 
+
 // ===============================================
 // 1. HANDLER PUT (UPDATE STATUS isCompleted)
 // ===============================================
 export async function PUT(
-    request: NextRequest, 
-    // PERBAIKAN: Gunakan destructuring standard tanpa tipe di deklarasi fungsi
-    context: any 
+    request: Request, // Gunakan Request standar
+    // PERBAIKAN FINAL: Gunakan destructuring dan biarkan TS menyimpulkan
+    { params }: { params: { id: string } } 
 ) {
     const verifiedUserId = authenticateRequest(request);
     
@@ -39,7 +40,7 @@ export async function PUT(
     }
 
     try {
-        const todoId = parseInt(context.params.id); // Akses params dari context
+        const todoId = parseInt(params.id); // Akses params dari context
         const body = await request.json();
         const { isCompleted } = body; 
 
@@ -71,8 +72,8 @@ export async function PUT(
 // 2. HANDLER DELETE (HAPUS TO-DO)
 // ===============================================
 export async function DELETE(
-    request: NextRequest, 
-    context: any
+    request: Request, 
+    { params }: { params: { id: string } }
 ) {
     const verifiedUserId = authenticateRequest(request);
 
@@ -81,7 +82,7 @@ export async function DELETE(
     }
 
     try {
-        const todoId = parseInt(context.params.id);
+        const todoId = parseInt(params.id);
 
         // Hapus data di Prisma:
         await prisma.todo.delete({
