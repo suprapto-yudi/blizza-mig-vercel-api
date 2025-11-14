@@ -4,6 +4,13 @@ import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import jwt from 'jsonwebtoken'; 
 
+// Deklarasikan interface yang diharapkan Next.js secara internal
+interface RouteContext {
+    params: {
+        id: string;
+    }
+}
+
 const SECRET = process.env.JWT_SECRET;
 if (!SECRET) throw new Error('JWT_SECRET is not defined');
 
@@ -30,13 +37,9 @@ const authenticateRequest = (request: Request) => {
 // ===============================================
 export async function PUT(
     request: NextRequest, 
-    // PERBAIKAN FINAL: Hapus tipe deklarasi eksplisit untuk argumen kedua
-    // Kita hanya perlu destructuring 'params'
-    { params }: any 
+    // PERBAIKAN FINAL: Gunakan interface RouteContext yang didefinisikan di atas
+    context: RouteContext // Menggunakan nama argumen 'context' secara konvensional
 ) {
-    // Note: Kita menggunakan 'any' pada argumen kedua untuk mengatasi build error
-    // dan mengasumsikan tipe 'params' adalah { id: string }
-    
     const verifiedUserId = authenticateRequest(request);
     
     if (!verifiedUserId) {
@@ -44,7 +47,7 @@ export async function PUT(
     }
 
     try {
-        const todoId = parseInt(params.id); // Konversi string ID dari URL ke integer
+        const todoId = parseInt(context.params.id); // Menggunakan context.params.id
         const body = await request.json();
         const { isCompleted } = body; 
 
@@ -52,7 +55,7 @@ export async function PUT(
         const updatedTodo = await prisma.todo.update({
             where: { 
                 id: todoId, 
-                userId: verifiedUserId // WAJIB: Hanya user pemilik yang bisa update
+                userId: verifiedUserId
             }, 
             data: { 
                 isCompleted: isCompleted,
@@ -77,9 +80,7 @@ export async function PUT(
 // ===============================================
 export async function DELETE(
     request: NextRequest, 
-    // PERBAIKAN FINAL: Hapus tipe deklarasi eksplisit untuk argumen kedua
-    // Kita hanya perlu destructuring 'params'
-    { params }: any
+    context: RouteContext // Menggunakan interface RouteContext
 ) {
     const verifiedUserId = authenticateRequest(request);
 
@@ -88,13 +89,13 @@ export async function DELETE(
     }
 
     try {
-        const todoId = parseInt(params.id);
+        const todoId = parseInt(context.params.id);
 
         // Hapus data di Prisma:
         await prisma.todo.delete({
             where: { 
                 id: todoId, 
-                userId: verifiedUserId // WAJIB: Hanya user pemilik yang bisa hapus
+                userId: verifiedUserId
             }, 
         });
 
