@@ -4,13 +4,6 @@ import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import jwt from 'jsonwebtoken'; 
 
-// Deklarasikan interface yang diharapkan Next.js secara internal
-interface RouteContext {
-    params: {
-        id: string;
-    }
-}
-
 const SECRET = process.env.JWT_SECRET;
 if (!SECRET) throw new Error('JWT_SECRET is not defined');
 
@@ -31,14 +24,13 @@ const authenticateRequest = (request: Request) => {
     return token ? getUserIdFromToken(token) : null;
 };
 
-
 // ===============================================
 // 1. HANDLER PUT (UPDATE STATUS isCompleted)
 // ===============================================
 export async function PUT(
     request: NextRequest, 
-    // PERBAIKAN FINAL: Gunakan interface RouteContext yang didefinisikan di atas
-    context: RouteContext // Menggunakan nama argumen 'context' secara konvensional
+    // PERBAIKAN: Gunakan destructuring standard tanpa tipe di deklarasi fungsi
+    context: any 
 ) {
     const verifiedUserId = authenticateRequest(request);
     
@@ -47,7 +39,7 @@ export async function PUT(
     }
 
     try {
-        const todoId = parseInt(context.params.id); // Menggunakan context.params.id
+        const todoId = parseInt(context.params.id); // Akses params dari context
         const body = await request.json();
         const { isCompleted } = body; 
 
@@ -80,7 +72,7 @@ export async function PUT(
 // ===============================================
 export async function DELETE(
     request: NextRequest, 
-    context: RouteContext // Menggunakan interface RouteContext
+    context: any
 ) {
     const verifiedUserId = authenticateRequest(request);
 
