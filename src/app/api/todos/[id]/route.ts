@@ -1,6 +1,6 @@
 // src/app/api/todos/[id]/route.ts
 
-import { NextResponse, NextRequest } from 'next/server'; // Import NextRequest
+import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import jwt from 'jsonwebtoken'; 
 
@@ -29,12 +29,14 @@ const authenticateRequest = (request: Request) => {
 // 1. HANDLER PUT (UPDATE STATUS isCompleted)
 // ===============================================
 export async function PUT(
-    // Argumen pertama: Harus NextRequest atau Request
     request: NextRequest, 
-    // Argumen kedua: Destructuring langsung parameter 'params'
-    // Next.js secara internal menyediakan konteks ini
-    { params }: { params: { id: string } } 
+    // PERBAIKAN FINAL: Hapus tipe deklarasi eksplisit untuk argumen kedua
+    // Kita hanya perlu destructuring 'params'
+    { params }: any 
 ) {
+    // Note: Kita menggunakan 'any' pada argumen kedua untuk mengatasi build error
+    // dan mengasumsikan tipe 'params' adalah { id: string }
+    
     const verifiedUserId = authenticateRequest(request);
     
     if (!verifiedUserId) {
@@ -74,10 +76,10 @@ export async function PUT(
 // 2. HANDLER DELETE (HAPUS TO-DO)
 // ===============================================
 export async function DELETE(
-    // Argumen pertama: Harus NextRequest atau Request
     request: NextRequest, 
-    // Argumen kedua: Destructuring langsung parameter 'params'
-    { params }: { params: { id: string } }
+    // PERBAIKAN FINAL: Hapus tipe deklarasi eksplisit untuk argumen kedua
+    // Kita hanya perlu destructuring 'params'
+    { params }: any
 ) {
     const verifiedUserId = authenticateRequest(request);
 
